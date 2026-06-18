@@ -1,0 +1,24 @@
+name: brew test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tap dependencies
+        run: brew tap borkdude/brew
+
+      - name: Install and test formulae
+        run: |
+          brew tap slagyr/tap "${GITHUB_WORKSPACE}"
+          for formula in Formula/*.rb; do
+            name="$(basename "${formula}" .rb)"
+            brew install --build-from-source "slagyr/tap/${name}"
+            brew test "slagyr/tap/${name}"
+          done
