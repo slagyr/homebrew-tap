@@ -3,7 +3,7 @@ class Isaac < Formula
   homepage "https://github.com/slagyr/isaac-foundation"
   url "https://github.com/slagyr/isaac-foundation/archive/refs/tags/v0.1.0.tar.gz"
   version "0.1.0"
-  sha256 "f91c5ff2751daeac5ea564d13bc60498be6818767d6ec6dff46c3bb4eae23b3e"
+  sha256 "d4fa61e2c72ae01e07b40bc4635fdded61c3f815c366acbcf69e89f517b95438"
   license "MIT"
 
   depends_on "borkdude/brew/babashka"
