@@ -1,0 +1,45 @@
+name: bump isaac formula
+
+on:
+  repository_dispatch:
+    types: [foundation-release]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "isaac-foundation release tag (e.g. v0.1.2)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve release tag
+        id: tag
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "value=${{ inputs.tag }}" >> "${GITHUB_OUTPUT}"
+          else
+            echo "value=${{ github.event.client_payload.tag }}" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Bump Formula/isaac.rb
+        run: |
+          chmod +x scripts/bump-isaac-formula.sh
+          ./scripts/bump-isaac-formula.sh "${{ steps.tag.outputs.value }}"
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Formula/isaac.rb
+          if git diff --cached --quiet; then
+            echo "Formula already at ${{ steps.tag.outputs.value }}"
+            exit 0
+          fi
+          git commit -m "Bump isaac formula to ${{ steps.tag.outputs.value }}"
+          git push
