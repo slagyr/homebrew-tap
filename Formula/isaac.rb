@@ -14,10 +14,12 @@ class Isaac < Formula
 
     deps_home = libexec/"deps-home"
     deps_home.mkpath
+    smoke_root = buildpath/"isaac-smoke-root"
+    smoke_root.mkpath
     ENV["HOME"] = deps_home
     system Formula["babashka"].opt_bin/"bb", "--config", root/"libexec/bb.edn", "prepare"
-    system root/"libexec/isaac", "help"
-    system root/"libexec/isaac", "--version"
+    system root/"libexec/isaac", "--root", smoke_root, "help"
+    system root/"libexec/isaac", "--root", smoke_root, "--version"
 
     (bin/"isaac").write <<~EOS
       #!/usr/bin/env bash
@@ -35,8 +37,11 @@ class Isaac < Formula
     ENV["CLJ_CONFIG"] = "#{deps_home}/.clojure"
     ENV["DEPS_CLJ_DIR"] = "#{deps_home}/.deps.clj"
 
-    assert_match "isaac", shell_output("#{bin}/isaac help")
-    assert_match version.to_s, shell_output("#{bin}/isaac --version")
+    smoke_root = testpath/"isaac-smoke-root"
+    smoke_root.mkpath
+
+    assert_match "isaac", shell_output("#{bin}/isaac --root #{smoke_root} help")
+    assert_match version.to_s, shell_output("#{bin}/isaac --root #{smoke_root} --version")
     system bin/"isaac", "--root", testpath/"isaac-root", "init"
     assert_path_exists testpath/"isaac-root/config/isaac.edn"
   end
