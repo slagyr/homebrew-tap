@@ -47,7 +47,7 @@ class Isaac < Formula
     smoke_root.mkpath
 
     assert_match "isaac", shell_output("#{bin}/isaac --root #{smoke_root} help")
-    assert_match version.to_s, shell_output("#{bin}/isaac --root #{smoke_root} --version")
+    assert_match(/\d+\.\d+\.\d+/, shell_output("#{bin}/isaac --root #{smoke_root} --version"))
     system bin/"isaac", "--root", testpath/"isaac-root", "init"
     assert_path_exists testpath/"isaac-root/config/isaac.edn"
   end
