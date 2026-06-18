@@ -16,17 +16,25 @@ class Isaac < Formula
     deps_home.mkpath
     ENV["HOME"] = deps_home
     system Formula["babashka"].opt_bin/"bb", "--config", root/"libexec/bb.edn", "prepare"
+    system root/"libexec/isaac", "help"
     system root/"libexec/isaac", "--version"
 
     (bin/"isaac").write <<~EOS
       #!/usr/bin/env bash
-      export CLJ_CONFIG="#{deps_home}/.clojure"
-      export DEPS_CLJ_DIR="#{deps_home}/.deps.clj"
+      export CLJ_CONFIG="${CLJ_CONFIG:-#{deps_home}/.clojure}"
+      export DEPS_CLJ_DIR="${DEPS_CLJ_DIR:-#{deps_home}/.deps.clj}"
       exec "#{root}/libexec/isaac" "$@"
     EOS
   end
 
   test do
+    deps_home = testpath/"deps-home"
+    deps_home.mkpath
+    cp_r "#{libexec}/deps-home/.", deps_home
+
+    ENV["CLJ_CONFIG"] = "#{deps_home}/.clojure"
+    ENV["DEPS_CLJ_DIR"] = "#{deps_home}/.deps.clj"
+
     assert_match "isaac", shell_output("#{bin}/isaac help")
     assert_match version.to_s, shell_output("#{bin}/isaac --version")
     system bin/"isaac", "--root", testpath/"isaac-root", "init"
