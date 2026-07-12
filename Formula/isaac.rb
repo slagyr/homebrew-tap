@@ -1,9 +1,9 @@
 class Isaac < Formula
   desc "Compose your AI assistant from installable modules"
   homepage "https://github.com/slagyr/isaac-foundation"
-  url "https://github.com/slagyr/isaac-foundation/archive/refs/tags/v0.1.20.tar.gz"
-  version "0.1.20"
-  sha256 "0b30c19c16421be4cdba4b32331ef4a90007551a3e9ecc5da56a9a0860a5fe6b"
+  url "https://github.com/slagyr/isaac-foundation/archive/refs/tags/v0.1.21.tar.gz"
+  version "0.1.21"
+  sha256 "4fbc3975ea1c59eda854b6115bfa0f3bf05c5ba730fb7b67a706692d8d44054d"
   license "MIT"
   head "https://github.com/slagyr/isaac-foundation.git", branch: "main"
 
