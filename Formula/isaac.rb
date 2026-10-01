@@ -16,14 +16,18 @@ class Isaac < Formula
 
   def install
     root = libexec/"isaac-foundation"
-    root.install "libexec", "src"
+    root.install "libexec", "src", "resources"
 
     deps_home = libexec/"deps-home"
     deps_home.mkpath
     smoke_root = buildpath/"isaac-smoke-root"
     smoke_root.mkpath
     ENV["HOME"] = deps_home
-    system Formula["babashka"].opt_bin/"bb", "--config", root/"libexec/bb.edn", "prepare"
+    # babashka and the JVM that deps.clj spawns read user.home from the OS user
+    # record, not HOME; point both at deps_home so the build never touches the
+    # real ~/.m2 (brew's sandbox denies ~/.m2/settings.xml).
+    ENV["JAVA_TOOL_OPTIONS"] = "-Duser.home=#{deps_home}"
+    system Formula["babashka"].opt_bin/"bb", "-Duser.home=#{deps_home}", "--config", root/"libexec/bb.edn", "prepare"
     system root/"libexec/isaac", "--root", smoke_root, "help"
     system root/"libexec/isaac", "--root", smoke_root, "--version"
 
