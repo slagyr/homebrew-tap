@@ -16,7 +16,7 @@ class Isaac < Formula
 
   def install
     root = libexec/"isaac-foundation"
-    root.install "libexec", "src", "resources"
+    root.install "libexec", "src", "resources", "deps.edn"
 
     deps_home = libexec/"deps-home"
     deps_home.mkpath
@@ -40,6 +40,8 @@ class Isaac < Formula
   end
 
   test do
+    assert_path_exists libexec/"isaac-foundation/deps.edn"
+
     deps_home = testpath/"deps-home"
     deps_home.mkpath
     cp_r "#{libexec}/deps-home/.", deps_home
